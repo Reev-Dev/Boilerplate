@@ -1,30 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext } from 'react';
 
-function DataFetcher() {
-  // State untuk menyimpan data yang di-fetch dan status loading
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+// Membuat Context bernama ThemeContext
+const ThemeContext = React.createContext('light');
 
-  // Menggunakan useEffect untuk fetch data ketika komponen dimounting
-  useEffect(() => {
-    fetch('https://api.example.com/data')
-      .then(response => response.json())
-      .then(data => {
-        setData(data);
-        setLoading(false); // Set loading ke false setelah data berhasil di-fetch
-      });
-  }, []); // Array kosong [] sebagai dependency array agar effect hanya berjalan sekali
+function ThemedComponent() {
+  // Menggunakan useContext untuk mengakses nilai ThemeContext
+  const theme = useContext(ThemeContext);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  // Menentukan gaya berdasarkan tema yang didapat dari context
+  const style = {
+    backgroundColor: theme === 'light' ? '#fff' : '#333',
+    color: theme === 'light' ? '#000' : '#fff',
+    padding: '10px',
+    textAlign: 'center'
+  };
 
   return (
-    <div>
-      <h1>Data yang di-fetch:</h1>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+    <div style={style}>
+      Tema saat ini: {theme}
     </div>
   );
 }
 
-export default DataFetcher;
+function App() {
+  return (
+    // Menyediakan nilai 'dark' untuk ThemeContext
+    <ThemeContext.Provider value="dark">
+      <ThemedComponent />
+    </ThemeContext.Provider>
+  );
+}
+
+export default App;
